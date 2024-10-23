@@ -1,0 +1,61 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Créer un nouvel événement écoresponsable</h3>
+
+    <form method="post" action="{% url 'create_field' %}">
+        {% csrf_token %}
+    
+        <!-- Size Field -->
+        <label for="size">Size</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" id="size" name="size" class="form-control" placeholder="Enter field size" required>
+        </div>
+    
+        <!-- Location Field -->
+        <label for="location">Location</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="text" id="location" name="location" class="form-control" placeholder="Enter location" required>
+        </div>
+    
+        <!-- Crop Type Select Dropdown -->
+        <label for="crop_type">Crop Type</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="crop_type" id="crop_type" class="form-control" required>
+                <option value="">Select Crop Type</option>
+                <option value="wheat">Wheat</option>
+                <option value="corn">Corn</option>
+                <option value="soybean">Soybean</option>
+                <option value="rice">Rice</option>
+                <!-- Add other crop types here -->
+            </select>
+        </div>
+    
+        <!-- Soil Type Select Dropdown -->
+        <label for="soil_type">Soil Type</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="soil_type" id="soil_type" class="form-control" required>
+                <option value="">Select Soil Type</option>
+                <option value="clay">Clay</option>
+                <option value="sandy">Sandy</option>
+                <option value="loamy">Loamy</option>
+                <option value="peaty">Peaty</option>
+                <!-- Add other soil types here -->
+            </select>
+        </div>
+    
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div style="color: red;">
+            <strong>{{ errors.field }}</strong>
+        </div>
+        {% endif %}
+    
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Create Field</button>
+    </form>
+    
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Update Field</h3>
+
+    <form method="post" action="{% url 'field_update' field.id %}">
+        {% csrf_token %}
+    
+        <!-- Size Field -->
+        <label for="size">Size</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" id="size" name="size" class="form-control" value="{{ field.size }}" required>
+        </div>
+    
+        <!-- Location Field -->
+        <label for="location">Location</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="text" id="location" name="location" class="form-control" value="{{ field.location }}" required>
+        </div>
+    
+        <!-- Crop Type Select Dropdown -->
+        <label for="crop_type">Crop Type</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="crop_type" id="crop_type" class="form-control" required>
+                <option value="">Select Crop Type</option>
+                <option value="wheat" {% if field.crop_type == 'wheat' %}selected{% endif %}>Wheat</option>
+                <option value="corn" {% if field.crop_type == 'corn' %}selected{% endif %}>Corn</option>
+                <option value="soybean" {% if field.crop_type == 'soybean' %}selected{% endif %}>Soybean</option>
+                <option value="rice" {% if field.crop_type == 'rice' %}selected{% endif %}>Rice</option>
+                <!-- Add other crop types here -->
+            </select>
+        </div>
+    
+        <!-- Soil Type Select Dropdown -->
+        <label for="soil_type">Soil Type</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="soil_type" id="soil_type" class="form-control" required>
+                <option value="">Select Soil Type</option>
+                <option value="clay" {% if field.soil_type == 'clay' %}selected{% endif %}>Clay</option>
+                <option value="sandy" {% if field.soil_type == 'sandy' %}selected{% endif %}>Sandy</option>
+                <option value="loamy" {% if field.soil_type == 'loamy' %}selected{% endif %}>Loamy</option>
+                <option value="peaty" {% if field.soil_type == 'peaty' %}selected{% endif %}>Peaty</option>
+                <!-- Add other soil types here -->
+            </select>
+        </div>
+    
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div style="color: red;">
+            <strong>{{ errors.field }}</strong>
+        </div>
+        {% endif %}
+    
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Update Field</button>
+    </form>
+    
+    
+</div>
+
+{% endblock %}
