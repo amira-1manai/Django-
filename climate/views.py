@@ -6,7 +6,7 @@ from .models import Field
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 
-
+from .models import WaterSource  # Adjust the import path if needed
 
 def index(request):
     api_key = 'b698494103add4361a716425d3c81fca'
@@ -69,8 +69,7 @@ def template_tables(request):
     return render(request, 'frontoffice/template/tables.html')
 
 
-
-
+# fields
 def create_field(request):
     if request.method == 'POST':
         size = request.POST.get('size')
@@ -116,3 +115,49 @@ def field_update(request, field_id):
         return redirect('field_list')
 
     return render(request, 'frontoffice/field/update_field.html', {'field': field})
+
+# Create a new water source
+def create_water_source(request):
+    if request.method == 'POST':
+        type_ = request.POST.get('type')
+        location = request.POST.get('location')
+        capacity = request.POST.get('capacity')
+
+        errors = {}
+        if not type_ or not location or not capacity:
+            errors['field'] = 'All fields are required.'
+
+        if not errors:
+            WaterSource.objects.create(type=type_, location=location, capacity=capacity)
+            return redirect('water_source_list')
+
+        return render(request, 'frontoffice/water_sources/create_water_source.html', {'errors': errors})
+
+    return render(request, 'frontoffice/water_sources/create_water_source.html')
+
+# List all water sources
+def water_source_list(request):
+    water_sources = WaterSource.objects.all()
+    return render(request, 'frontoffice/water_sources/water_source_list.html', {'water_sources': water_sources})
+
+# Delete a water source
+def water_source_delete(request, water_source_id):
+    water_source = get_object_or_404(WaterSource, id=water_source_id)
+    if request.method == 'POST':
+        water_source.delete()
+        messages.success(request, 'Water source deleted successfully.')
+        return redirect('water_source_list')
+    return redirect('water_source_list')
+
+# Update a water source
+def water_source_update(request, water_source_id):
+    water_source = get_object_or_404(WaterSource, id=water_source_id)
+
+    if request.method == 'POST':
+        water_source.type = request.POST['type']
+        water_source.location = request.POST['location']
+        water_source.capacity = request.POST['capacity']
+        water_source.save()
+        return redirect('water_source_list')
+
+    return render(request, 'frontoffice/water_sources/update_water_source.html', {'water_source': water_source})
