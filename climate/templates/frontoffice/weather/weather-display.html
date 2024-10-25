@@ -1,0 +1,87 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<title>Weather Forecast for {{ city|title }}</title>
+
+<div class="container mt-4 p-4">
+    <div class="header" style="border-radius: 8px;">
+        <h1>7-Day Weather Forecast for {{ city|title }}</h1>
+    </div>
+
+    {% if error %}
+        <div style="color: red; text-align: center;">
+            <strong>{{ error }}</strong>
+        </div>
+    {% else %}
+        <table class="forecast-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Max Temperature (°C)</th>
+                    <th>Min Temperature (°C)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in forecast_data %}
+                <tr>
+                    <td>{{ data.date }}</td>
+                    <td>{{ data.max_temp }}</td>
+                    <td>{{ data.min_temp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 600px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        color: #007bff;
+    }
+
+    .forecast-table {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        color: #333;
+        margin: 0;
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+    }
+
+    .forecast-table th,
+    .forecast-table td {
+        padding: 13px;
+        text-align: center;
+    }
+
+    .forecast-table th {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+
+    .forecast-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .forecast-table tr:hover {
+        background-color: #eaf4ff;
+    }
+</style>
+
+{% endblock %}
