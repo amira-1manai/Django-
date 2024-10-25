@@ -5,7 +5,9 @@ import datetime
 from .models import Field
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-
+from django.shortcuts import render, redirect
+from .models import Crop
+from django.contrib import messages
 
 
 def index(request):
@@ -116,3 +118,58 @@ def field_update(request, field_id):
         return redirect('field_list')
 
     return render(request, 'frontoffice/field/update_field.html', {'field': field})
+
+
+def create_crop(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        water_requirement = request.POST.get('water_requirement')
+
+        if name and water_requirement:
+            try:
+                water_requirement = float(water_requirement)
+                Crop.objects.create(name=name, water_requirement=water_requirement)
+                messages.success(request, 'Crop created successfully!')
+                return redirect('crop_list')  # Redirigez vers une liste des crops ou une autre vue
+            except ValueError:
+                messages.error(request, 'Please enter a valid number for water requirement.')
+        else:
+            messages.error(request, 'All fields are required.')
+
+    return render(request, 'frontoffice/crop/create_crop.html')
+
+
+def crop_list(request):
+    crops = Crop.objects.all()
+    return render(request, 'frontoffice/crop/crop_list.html', {'crops': crops})
+
+
+def crop_update(request, crop_id):
+    crop = get_object_or_404(Crop, id=crop_id)
+    errors = {}
+    
+    if request.method == "POST":
+        name = request.POST.get('name')
+        water_requirement = request.POST.get('water_requirement')
+
+        # Validation simple
+        if not name:
+            errors['crop'] = "Name is required."
+        if not water_requirement:
+            errors['crop'] = "Water requirement is required."
+
+        if not errors:
+            crop.name = name
+            crop.water_requirement = float(water_requirement)
+            crop.save()
+            return redirect('crop_list')
+
+    return render(request, 'frontoffice/crop/update_crop.html', {'crop': crop, 'errors': errors})
+
+
+def delete_crop(request, crop_id):
+    crop = get_object_or_404(Crop, id=crop_id)
+    if request.method == "POST":
+        crop.delete()
+        return redirect('crop_list')
+    return redirect('crop_list')
