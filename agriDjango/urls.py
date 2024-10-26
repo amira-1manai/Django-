@@ -25,4 +25,16 @@ urlpatterns = [
     path('crops/', views.crop_list, name='crop_list'),
     path('update-crop/<int:crop_id>/', views.crop_update, name='crop_update'),
     path('delete-crop/<int:crop_id>/', views.delete_crop, name='crop_delete'),
+
+
+
+    #fertilization
+     path('fertilization-schedules/create/', views.create_fertilization, name='create_fertilization'),
+    path('fertilization-schedules/', views.fertilization_list, name='fertilization_list'),
+    path('fertilization-schedules/update/<int:schedule_id>/', views.update_fertilization, name='update_fertilization'),
+    path('fertilization-schedules/delete/<int:schedule_id>/', views.delete_fertilization, name='delete_fertilization'),
+
+
+
 ]
+

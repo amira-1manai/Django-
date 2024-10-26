@@ -8,6 +8,10 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import Crop
 from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import FertilizationSchedule
+from .forms import FertilizationScheduleForm
+from .models import FertilizationSchedule
 
 
 def index(request):
@@ -173,3 +177,39 @@ def delete_crop(request, crop_id):
         crop.delete()
         return redirect('crop_list')
     return redirect('crop_list')
+
+
+
+def fertilization_list(request):
+    schedules = FertilizationSchedule.objects.all()
+    return render(request, 'frontoffice/fertilization/fertilization_list.html', {'schedules': schedules})
+
+def create_fertilization(request):
+    if request.method == 'POST':
+        form = FertilizationScheduleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Redirect or render a success message
+    else:
+        form = FertilizationScheduleForm()
+    return render(request, 'frontoffice/fertilization/create_fertilization.html', {'form': form})
+
+def update_fertilization(request, schedule_id):
+    schedule = get_object_or_404(FertilizationSchedule, id=schedule_id)
+    if request.method == 'POST':
+        form = FertilizationScheduleForm(request.POST, instance=schedule)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Fertilization schedule updated successfully!')
+            return redirect('fertilization_list')
+    else:
+        form = FertilizationScheduleForm(instance=schedule)
+    return render(request, 'frontoffice/fertilization/update_fertilization.html', {'form': form})
+
+def delete_fertilization(request, schedule_id):
+    schedule = get_object_or_404(FertilizationSchedule, id=schedule_id)
+    if request.method == "POST":
+        schedule.delete()
+        messages.success(request, 'Fertilization schedule deleted successfully!')
+        return redirect('fertilization_list')
+    return render(request, 'frontoffice/fertilization/delete_fertilization.html', {'schedule': schedule})

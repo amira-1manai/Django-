@@ -45,3 +45,18 @@ class WeatherData(models.Model):
 
     def __str__(self):
         return f"Weather on {self.date} - Temp: {self.temperature}°C"
+
+
+
+
+#FertilizationSchedule model 
+class FertilizationSchedule(models.Model):
+    crop = models.ForeignKey(Crop, on_delete=models.CASCADE)
+    fertilizer_type = models.CharField(max_length=100)
+    amount = models.FloatField()  # en kg/hectare, par exemple
+    application_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.fertilizer_type} pour {self.crop.name} le {self.application_date}"
+
+
