@@ -5,8 +5,9 @@ import datetime
 from .models import Field
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-
+from .models import IrrigationPlan  # Adjust the import based on your project structure
 from .models import WaterSource  # Adjust the import path if needed
+from .models import WaterUsage  # Adjust the import path if needed
 
 def index(request):
     api_key = 'b698494103add4361a716425d3c81fca'
@@ -161,3 +162,69 @@ def water_source_update(request, water_source_id):
         return redirect('water_source_list')
 
     return render(request, 'frontoffice/water_sources/update_water_source.html', {'water_source': water_source})
+
+# Create a new water usage
+def create_water_usage(request):
+    if request.method == 'POST':
+        irrigation_plan_id = request.POST.get('irrigation_plan')
+        water_source_id = request.POST.get('water_source')
+        amount_used = request.POST.get('amount_used')
+
+        errors = {}
+        if not irrigation_plan_id or not water_source_id or not amount_used:
+            errors['field'] = 'All fields are required.'
+
+        if not errors:
+            WaterUsage.objects.create(
+                irrigation_plan_id=irrigation_plan_id,
+                water_source_id=water_source_id,
+                amount_used=amount_used
+            )
+            messages.success(request, 'Water usage created successfully.')
+            return redirect('water_usage_list')
+
+        return render(request, 'frontoffice/water_usages/create_water_usage.html', {
+            'errors': errors,
+            'irrigation_plans': IrrigationPlan.objects.all(),
+            'water_sources': WaterSource.objects.all()
+        })
+
+    return render(request, 'frontoffice/water_usages/create_water_usage.html', {
+        'irrigation_plans': IrrigationPlan.objects.all(),
+        'water_sources': WaterSource.objects.all()
+    })
+
+
+# List all water usages
+def water_usage_list(request):
+    water_usages = WaterUsage.objects.all().select_related('irrigation_plan', 'water_source')
+    return render(request, 'frontoffice/water_usages/water_usage_list.html', {
+        'water_usages': water_usages
+    })
+
+
+# Update a water usage
+def water_usage_update(request, water_usage_id):
+    water_usage = get_object_or_404(WaterUsage, id=water_usage_id)
+
+    if request.method == 'POST':
+        water_usage.irrigation_plan_id = request.POST['irrigation_plan']
+        water_usage.water_source_id = request.POST['water_source']
+        water_usage.amount_used = request.POST['amount_used']
+        water_usage.save()
+        messages.success(request, 'Water usage updated successfully.')
+        return redirect('water_usage_list')
+
+    return render(request, 'frontoffice/water_usages/update_water_usage.html', {
+        'water_usage': water_usage,
+        'irrigation_plans': IrrigationPlan.objects.all(),
+        'water_sources': WaterSource.objects.all()
+    })
+# Delete a water usage
+def water_usage_delete(request, water_usage_id):
+    water_usage = get_object_or_404(WaterUsage, id=water_usage_id)
+    if request.method == 'POST':
+        water_usage.delete()
+        messages.success(request, 'Water usage deleted successfully.')
+        return redirect('water_usage_list')
+    return redirect('water_usage_list')  # Redirect if method is not POST

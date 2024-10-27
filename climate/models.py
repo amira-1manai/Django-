@@ -45,3 +45,11 @@ class WeatherData(models.Model):
 
     def __str__(self):
         return f"Weather on {self.date} - Temp: {self.temperature}°C"
+    # Water Usage Model
+class WaterUsage(models.Model):
+    irrigation_plan = models.ForeignKey(IrrigationPlan, on_delete=models.CASCADE)
+    water_source = models.ForeignKey(WaterSource, on_delete=models.CASCADE)
+    amount_used = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.amount_used} liters from {self.water_source} using {self.irrigation_plan}"
