@@ -24,10 +24,10 @@
         </div>
 
         <div class="mb-3">
-            <label for="water_source" class="form-label">Source d'eau</label>
-            <select id="water_source" name="water_source" class="form-select" required>
+            <label for="water_usage" class="form-label">Source d'eau</label>
+            <select id="water_usage" name="water_usage" class="form-select" required>
                 <option value="" disabled selected>Sélectionnez une source d'eau</option>
-                {% for source in water_sources %}
+                {% for source in water_usages %}
                     <option value="{{ source.id }}">{{ source.name }}</option>  {# Assuming source has a name attribute #}
                 {% endfor %}
             </select>
