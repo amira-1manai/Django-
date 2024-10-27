@@ -197,7 +197,7 @@ def create_water_usage(request):
 
 # List all water usages
 def water_usage_list(request):
-    water_usages = WaterUsage.objects.all().select_related('irrigation_plan', 'water_source')
+    water_usages = WaterUsage.objects.all()
     return render(request, 'frontoffice/water_usages/water_usage_list.html', {
         'water_usages': water_usages
     })
