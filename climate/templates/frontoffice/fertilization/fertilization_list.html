@@ -29,7 +29,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for schedule in fertilization_schedules %}
+                                {% for schedule in schedules %}
                                 <tr>
                                     <td>
                                         <div class="my-auto ps-3">
@@ -40,8 +40,8 @@
                                     <td>{{ schedule.amount }}</td>
                                     <td>{{ schedule.application_date }}</td>
                                     <td>
-                                        <a href="{% url 'update_fertilization_schedule' schedule.id %}" class="btn btn-link text-secondary mb-0">Modifier</a> |
-                                        <form method="post" action="{% url 'delete_fertilization_schedule' schedule.id %}" style="display:inline;">
+                                        <a href="{% url 'update_fertilization' schedule.id %}" class="btn btn-link text-secondary mb-0">Modifier</a> |
+                                        <form method="post" action="{% url 'delete_fertilization' schedule.id %}" style="display:inline;">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-link text-danger mb-0" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce programme de fertilisation ?');">Supprimer</button>
                                         </form>

@@ -1,4 +1,5 @@
 import requests
+import logging
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import datetime
@@ -10,7 +11,6 @@ from .models import Crop
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import FertilizationSchedule
-from .forms import FertilizationScheduleForm
 from .models import FertilizationSchedule
 
 
@@ -179,37 +179,85 @@ def delete_crop(request, crop_id):
     return redirect('crop_list')
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import FertilizationSchedule, Crop
 
+# Afficher la liste des programmes de fertilisation
 def fertilization_list(request):
     schedules = FertilizationSchedule.objects.all()
     return render(request, 'frontoffice/fertilization/fertilization_list.html', {'schedules': schedules})
 
+# Créer un programme de fertilisation
 def create_fertilization(request):
     if request.method == 'POST':
-        form = FertilizationScheduleForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # Redirect or render a success message
-    else:
-        form = FertilizationScheduleForm()
-    return render(request, 'frontoffice/fertilization/create_fertilization.html', {'form': form})
+        crop_id = request.POST.get('crop')
+        fertilizer_type = request.POST.get('fertilizer_type')
+        amount = request.POST.get('amount')
+        application_date = request.POST.get('application_date')
 
-def update_fertilization(request, schedule_id):
-    schedule = get_object_or_404(FertilizationSchedule, id=schedule_id)
+        # Validation des champs requis
+        if not all([crop_id, fertilizer_type, amount, application_date]):
+            messages.error(request, 'Tous les champs sont obligatoires.')
+            crops = Crop.objects.all()
+            return render(request, 'frontoffice/fertilization/create_fertilization.html', {'crops': crops})
+
+        # Obtenir l'instance de Crop en fonction de l'ID fourni
+        crop_instance = get_object_or_404(Crop, id=crop_id)
+
+        # Créer l'objet FertilizationSchedule avec l'instance de Crop
+        FertilizationSchedule.objects.create(
+            crop=crop_instance,
+            fertilizer_type=fertilizer_type,
+            amount=amount,
+            application_date=application_date
+        )
+        messages.success(request, 'Programme de fertilisation créé avec succès !')
+        return redirect('fertilization_list')
+
+    crops = Crop.objects.all()  # Passer la liste des cultures disponibles pour le formulaire
+    return render(request, 'frontoffice/fertilization/create_fertilization.html', {'crops': crops})
+
+# Mettre à jour un programme de fertilisation existant
+def update_fertilization(request, fertilization_id):
+    fertilization_schedule = get_object_or_404(FertilizationSchedule, id=fertilization_id)
+    crops = Crop.objects.all()
+    
     if request.method == 'POST':
-        form = FertilizationScheduleForm(request.POST, instance=schedule)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Fertilization schedule updated successfully!')
-            return redirect('fertilization_list')
-    else:
-        form = FertilizationScheduleForm(instance=schedule)
-    return render(request, 'frontoffice/fertilization/update_fertilization.html', {'form': form})
+        crop_id = request.POST.get('crop')
+        fertilizer_type = request.POST.get('fertilizer_type')
+        amount = request.POST.get('amount')
+        application_date = request.POST.get('application_date')
 
+        # Validation des champs requis
+        if not all([crop_id, fertilizer_type, amount, application_date]):
+            messages.error(request, 'Tous les champs sont obligatoires.')
+            context = {
+                'fertilization_schedule': fertilization_schedule,
+                'crops': crops,
+            }
+            return render(request, 'frontoffice/fertilization/update_fertilization.html', context)
+
+        # Effectuer la mise à jour
+        fertilization_schedule.crop_id = crop_id
+        fertilization_schedule.fertilizer_type = fertilizer_type
+        fertilization_schedule.amount = amount
+        fertilization_schedule.application_date = application_date
+        fertilization_schedule.save()
+        messages.success(request, 'Programme de fertilisation mis à jour avec succès !')
+        return redirect('fertilization_list')  # rediriger vers la liste des fertilisations
+
+    context = {
+        'fertilization_schedule': fertilization_schedule,
+        'crops': crops,
+    }
+    return render(request, 'frontoffice/fertilization/update_fertilization.html', context)
+
+# Supprimer un programme de fertilisation
 def delete_fertilization(request, schedule_id):
     schedule = get_object_or_404(FertilizationSchedule, id=schedule_id)
     if request.method == "POST":
         schedule.delete()
-        messages.success(request, 'Fertilization schedule deleted successfully!')
+        messages.success(request, 'Programme de fertilisation supprimé avec succès !')
         return redirect('fertilization_list')
     return render(request, 'frontoffice/fertilization/delete_fertilization.html', {'schedule': schedule})

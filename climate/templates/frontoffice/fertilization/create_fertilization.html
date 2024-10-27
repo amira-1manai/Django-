@@ -6,43 +6,43 @@
 
     <form method="post" action="{% url 'create_fertilization' %}">
         {% csrf_token %}
-    
+
         <!-- Crop Select Dropdown -->
         <label for="crop">Culture</label>
         <div class="input-group input-group-outline mb-3">
             <select name="crop" id="crop" class="form-control" required>
                 <option value="">Sélectionnez une culture</option>
-                {% for crop in form.fields.crop.queryset %}
+                {% for crop in crops %}
                 <option value="{{ crop.id }}">{{ crop.name }}</option>
                 {% endfor %}
             </select>
         </div>
-    
+
         <!-- Fertilizer Type Field -->
         <label for="fertilizer_type">Type de fertilisant</label>
         <div class="input-group input-group-outline mb-3">
             <input type="text" id="fertilizer_type" name="fertilizer_type" class="form-control" placeholder="Entrez le type de fertilisant" required>
         </div>
-    
+
         <!-- Amount Field -->
         <label for="amount">Quantité (kg/ha)</label>
         <div class="input-group input-group-outline mb-3">
             <input type="number" step="0.01" id="amount" name="amount" class="form-control" placeholder="Entrez la quantité en kg/ha" required>
         </div>
-    
+
         <!-- Application Date Field -->
         <label for="application_date">Date d'application</label>
         <div class="input-group input-group-outline mb-3">
             <input type="date" id="application_date" name="application_date" class="form-control" required>
         </div>
-    
+
         <!-- Display Form Errors (If Any) -->
-        {% if form.errors %}
+        {% if errors %}
         <div style="color: red;">
-            <strong>{{ form.errors }}</strong>
+            <strong>{{ errors }}</strong>
         </div>
         {% endif %}
-    
+
         <!-- Submit Button -->
         <button type="submit" class="btn btn-success">Créer Programme de Fertilisation</button>
     </form>
