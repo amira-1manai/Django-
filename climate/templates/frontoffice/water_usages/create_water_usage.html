@@ -4,40 +4,49 @@
 <div class="container card col-9 p-4 mt-4">
     <h3>Créer une nouvelle utilisation de l'eau</h3>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-
-    <form method="post">
+    <form method="post" action="{% url 'create_water_usage' %}">  {# Assurez-vous que l'URL correspond à la vue de création #}
         {% csrf_token %}
         
-        <div class="mb-3">
-            <label for="irrigation_plan" class="form-label">Plan d'irrigation</label>
-            <select id="irrigation_plan" name="irrigation_plan" class="form-select" required>
-                <option value="" disabled selected>Sélectionnez un plan d'irrigation</option>
+        <!-- Irrigation Plan Field -->
+        <label for="id_irrigation_plan">Plan d'irrigation</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="irrigation_plan" id="id_irrigation_plan" class="form-control" required>
+                <option value="">Sélectionnez un plan d'irrigation</option>
                 {% for plan in irrigation_plans %}
-                    <option value="{{ plan.id }}">{{ plan.name }}</option>  {# Assuming plan has a name attribute #}
+                    <option value="{{ plan.id }}">{{ plan.name }}</option>  {# Supposons que chaque plan a un champ 'name' #}
                 {% endfor %}
             </select>
         </div>
 
-        <div class="mb-3">
-            <label for="water_usage" class="form-label">Source d'eau</label>
-            <select id="water_usage" name="water_usage" class="form-select" required>
-                <option value="" disabled selected>Sélectionnez une source d'eau</option>
-                {% for source in water_usages %}
-                    <option value="{{ source.id }}">{{ source.name }}</option>  {# Assuming source has a name attribute #}
+        <!-- Water Source Field -->
+        <label for="id_water_source">Source d'eau</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="water_source" id="id_water_source" class="form-control" required>
+                <option value="">Sélectionnez une source d'eau</option>
+                {% for source in water_sources %}
+                    <option value="{{ source.id }}">{{ source.type }}</option>  {# Supposons que chaque source a un champ 'type' #}
                 {% endfor %}
             </select>
         </div>
 
-        <div class="mb-3">
-            <label for="amount_used" class="form-label">Quantité utilisée (en litres)</label>
-            <input type="number" step="0.01" id="amount_used" name="amount_used" class="form-control" required>
+        <!-- Amount Used Field -->
+        <label for="id_amount_used">Quantité utilisée (en litres)</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" name="amount_used" id="id_amount_used" class="form-control" placeholder="Entrez la quantité" required>
         </div>
 
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div style="color: red;">
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Submit Button -->
         <button type="submit" class="btn btn-success">Créer l'utilisation de l'eau</button>
     </form>
 </div>

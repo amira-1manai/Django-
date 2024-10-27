@@ -163,6 +163,8 @@ def water_source_update(request, water_source_id):
 
     return render(request, 'frontoffice/water_sources/update_water_source.html', {'water_source': water_source})
 
+#
+
 # Create a new water usage
 def create_water_usage(request):
     if request.method == 'POST':
@@ -180,7 +182,7 @@ def create_water_usage(request):
                 water_source_id=water_source_id,
                 amount_used=amount_used
             )
-            messages.success(request, 'Water usage created successfully.')
+            messages.success(request, 'L\'utilisation de l\'eau a été créée avec succès.')
             return redirect('water_usage_list')
 
         return render(request, 'frontoffice/water_usages/create_water_usage.html', {
@@ -189,20 +191,11 @@ def create_water_usage(request):
             'water_sources': WaterSource.objects.all()
         })
 
+    # GET request
     return render(request, 'frontoffice/water_usages/create_water_usage.html', {
         'irrigation_plans': IrrigationPlan.objects.all(),
         'water_sources': WaterSource.objects.all()
     })
-
-
-# List all water usages
-def water_usage_list(request):
-    water_usages = WaterUsage.objects.all()
-    return render(request, 'frontoffice/water_usages/water_usage_list.html', {
-        'water_usages': water_usages
-    })
-
-
 # Update a water usage
 def water_usage_update(request, water_usage_id):
     water_usage = get_object_or_404(WaterUsage, id=water_usage_id)
@@ -228,3 +221,9 @@ def water_usage_delete(request, water_usage_id):
         messages.success(request, 'Water usage deleted successfully.')
         return redirect('water_usage_list')
     return redirect('water_usage_list')  # Redirect if method is not POST
+# List all water usages
+def water_usage_list(request):
+    water_usages = WaterUsage.objects.all()
+    return render(request, 'frontoffice/water_usages/water_usage_list.html', {
+        'water_usages': water_usages
+    })
