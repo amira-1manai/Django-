@@ -1,23 +1,37 @@
-<!-- predict.html -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prédiction de l'utilisation de l'eau</title>
+    <title>Water Usage Prediction</title>
 </head>
 <body>
-    <h1>Prédiction de l'utilisation de l'eau</h1>
+    <h1>Water Usage Prediction</h1>
+    
+    <form method="get" action="{% url 'train_and_predict' %}">
+        <label for="irrigation_plan_id">Irrigation Plan ID:</label>
+        <input type="text" id="irrigation_plan_id" name="irrigation_plan_id" required>
+
+        <label for="water_source_id">Water Source ID:</label>
+        <input type="text" id="water_source_id" name="water_source_id" required>
+
+        <label for="amount_used">Amount Used:</label>
+        <input type="number" id="amount_used" name="amount_used" required>
+
+        <button type="submit">Predict</button>
+    </form>
 
     {% if predictions %}
-        <h2>Résultats des prédictions :</h2>
+        <h2>Prediction Results:</h2>
         <ul>
             {% for prediction in predictions %}
-                <li>Utilisation estimée de l'eau : {{ prediction }} litres</li>
+                <li>{{ prediction }}</li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p>{{ error }}</p>
+    {% endif %}
+
+    {% if error %}
+        <h2 style="color:red;">{{ error }}</h2>
     {% endif %}
 </body>
 </html>

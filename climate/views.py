@@ -186,11 +186,11 @@ def create_water_usage(request):
             'water_sources': WaterSource.objects.all()
         })
 
+    # GET request
     return render(request, 'frontoffice/water_usages/create_water_usage.html', {
         'irrigation_plans': IrrigationPlan.objects.all(),
         'water_sources': WaterSource.objects.all()
     })
-
 # Update a water usage
 def water_usage_update(request, water_usage_id):
     water_usage = get_object_or_404(WaterUsage, id=water_usage_id)
@@ -208,7 +208,6 @@ def water_usage_update(request, water_usage_id):
         'irrigation_plans': IrrigationPlan.objects.all(),
         'water_sources': WaterSource.objects.all()
     })
-
 # Delete a water usage
 def water_usage_delete(request, water_usage_id):
     water_usage = get_object_or_404(WaterUsage, id=water_usage_id)
@@ -216,15 +215,13 @@ def water_usage_delete(request, water_usage_id):
         water_usage.delete()
         messages.success(request, 'Water usage deleted successfully.')
         return redirect('water_usage_list')
-    return redirect('water_usage_list')
-
+    return redirect('water_usage_list')  # Redirect if method is not POST
 # List all water usages
 def water_usage_list(request):
     water_usages = WaterUsage.objects.all()
     return render(request, 'frontoffice/water_usages/water_usage_list.html', {
         'water_usages': water_usages
     })
-
 #
 def train_and_predict(request):
     # Récupérer les données de WaterUsage
@@ -234,11 +231,11 @@ def train_and_predict(request):
     print(data.head())  # Affiche les 5 premières lignes du DataFrame dans la console
 
     if data.empty:
-        return render(request, 'predict.html', {'error': 'No data available for training.'})
+        return render(request, 'frontoffice/water_usages/predict.html', {'error': 'No data available for training.'})
 
     # Assurez-vous que les noms de colonnes correspondent à ceux dans le DataFrame
     if 'irrigation_plan_id' not in data.columns or 'water_source_id' not in data.columns:
-        return render(request, 'predict.html', {'error': 'Expected columns not found in data.'})
+        return render(request, 'frontoffice/water_usages/predict.html', {'error': 'Expected columns not found in data.'})
 
     # Encodage des variables catégorielles
     label_encoder = LabelEncoder()
@@ -259,5 +256,8 @@ def train_and_predict(request):
     # Prédictions
     predictions = model.predict(X_test)
 
+    # Convertir les prédictions en une liste pour le template
+    predictions_list = predictions.tolist()
+
     # Renvoie le résultat au template
-    return render(request, 'frontoffice/water_usages/predict.html', {'predictions': predictions})
+    return render(request, 'frontoffice/water_usages/predict.html', {'predictions': predictions_list})
