@@ -1,14 +1,16 @@
+from django.conf import settings
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-import datetime
-from .models import Field
-from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-from .models import IrrigationPlan  # Adjust the import based on your project structure
-from .models import WaterSource  # Adjust the import path if needed
-from .models import WaterUsage  # Adjust the import path if needed
+from .models import Field, IrrigationPlan, WaterSource, WaterUsage
 
+import datetime
+import pandas as pd
+from django.shortcuts import render
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 def index(request):
     api_key = 'b698494103add4361a716425d3c81fca'
     current_weather_url = 'https://api.openweathermap.org/data/2.5/weather?q={}&appid={}'
@@ -29,7 +31,6 @@ def index(request):
 def fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url):
     response = requests.get(current_weather_url.format(city, api_key)).json()
 
-    # Print the API response to inspect the structure
     print("Current weather response:", response)
 
     if 'coord' not in response:
@@ -62,13 +63,11 @@ def fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url)
 
     return weather_data, daily_forecasts
 
-
-
 def home_view(request):
     return render(request, 'frontoffice/layout/app.html')
+
 def template_tables(request):
     return render(request, 'frontoffice/template/tables.html')
-
 
 # fields
 def create_field(request):
@@ -78,30 +77,28 @@ def create_field(request):
         crop_type = request.POST.get('crop_type')
         soil_type = request.POST.get('soil_type')
 
-        # Perform validation here (simple example)
         errors = {}
         if not size or not location or not crop_type or not soil_type:
             errors['field'] = 'All fields are required.'
 
         if not errors:
             Field.objects.create(size=size, location=location, crop_type=crop_type, soil_type=soil_type)
-            return redirect('field_list')  # Redirect to list view
+            return redirect('field_list')
 
-        # If there are errors, render the form again with errors
         return render(request, 'frontoffice/create_field.html', {'errors': errors})
 
     return render(request, 'frontoffice/field/create_field.html')
 
 def field_list(request):
-    fields = Field.objects.all()  # Fetch all field instances from the database
+    fields = Field.objects.all()
     return render(request, 'frontoffice/field/field_list.html', {'fields': fields})
 
 def field_delete(request, field_id):
-    field = get_object_or_404(Field, id=field_id)  # Fetch the field instance by ID
+    field = get_object_or_404(Field, id=field_id)
     if request.method == 'POST':
-        field.delete()  # Delete the field
-        messages.success(request, 'Field deleted successfully.')  # Success message
-        return redirect('field_list')  # Redirect to the field list page
+        field.delete()
+        messages.success(request, 'Field deleted successfully.')
+        return redirect('field_list')
     return redirect('field_list')
 
 def field_update(request, field_id):
@@ -163,8 +160,6 @@ def water_source_update(request, water_source_id):
 
     return render(request, 'frontoffice/water_sources/update_water_source.html', {'water_source': water_source})
 
-#
-
 # Create a new water usage
 def create_water_usage(request):
     if request.method == 'POST':
@@ -191,11 +186,11 @@ def create_water_usage(request):
             'water_sources': WaterSource.objects.all()
         })
 
-    # GET request
     return render(request, 'frontoffice/water_usages/create_water_usage.html', {
         'irrigation_plans': IrrigationPlan.objects.all(),
         'water_sources': WaterSource.objects.all()
     })
+
 # Update a water usage
 def water_usage_update(request, water_usage_id):
     water_usage = get_object_or_404(WaterUsage, id=water_usage_id)
@@ -213,6 +208,7 @@ def water_usage_update(request, water_usage_id):
         'irrigation_plans': IrrigationPlan.objects.all(),
         'water_sources': WaterSource.objects.all()
     })
+
 # Delete a water usage
 def water_usage_delete(request, water_usage_id):
     water_usage = get_object_or_404(WaterUsage, id=water_usage_id)
@@ -220,10 +216,48 @@ def water_usage_delete(request, water_usage_id):
         water_usage.delete()
         messages.success(request, 'Water usage deleted successfully.')
         return redirect('water_usage_list')
-    return redirect('water_usage_list')  # Redirect if method is not POST
+    return redirect('water_usage_list')
+
 # List all water usages
 def water_usage_list(request):
     water_usages = WaterUsage.objects.all()
     return render(request, 'frontoffice/water_usages/water_usage_list.html', {
         'water_usages': water_usages
     })
+
+#
+def train_and_predict(request):
+    # Récupérer les données de WaterUsage
+    data = pd.DataFrame(list(WaterUsage.objects.all().values()))
+
+    # Ajoute ceci pour inspecter les données
+    print(data.head())  # Affiche les 5 premières lignes du DataFrame dans la console
+
+    if data.empty:
+        return render(request, 'predict.html', {'error': 'No data available for training.'})
+
+    # Assurez-vous que les noms de colonnes correspondent à ceux dans le DataFrame
+    if 'irrigation_plan_id' not in data.columns or 'water_source_id' not in data.columns:
+        return render(request, 'predict.html', {'error': 'Expected columns not found in data.'})
+
+    # Encodage des variables catégorielles
+    label_encoder = LabelEncoder()
+    data['irrigation_plan'] = label_encoder.fit_transform(data['irrigation_plan_id'])
+    data['water_source'] = label_encoder.fit_transform(data['water_source_id'])
+
+    # Séparation des features et de la target
+    X = data[['irrigation_plan', 'water_source']]
+    y = data['amount_used']
+
+    # Division en ensembles d'entraînement et de test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Création du modèle
+    model = RandomForestRegressor()
+    model.fit(X_train, y_train)
+
+    # Prédictions
+    predictions = model.predict(X_test)
+
+    # Renvoie le résultat au template
+    return render(request, 'frontoffice/water_usages/predict.html', {'predictions': predictions})

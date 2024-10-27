@@ -53,3 +53,4 @@ class WaterUsage(models.Model):
 
     def __str__(self):
         return f"{self.amount_used} liters from {self.water_source} using {self.irrigation_plan}"
+    

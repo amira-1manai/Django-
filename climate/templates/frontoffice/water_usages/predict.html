@@ -1,0 +1,23 @@
+<!-- predict.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction de l'utilisation de l'eau</title>
+</head>
+<body>
+    <h1>Prédiction de l'utilisation de l'eau</h1>
+
+    {% if predictions %}
+        <h2>Résultats des prédictions :</h2>
+        <ul>
+            {% for prediction in predictions %}
+                <li>Utilisation estimée de l'eau : {{ prediction }} litres</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>{{ error }}</p>
+    {% endif %}
+</body>
+</html>
