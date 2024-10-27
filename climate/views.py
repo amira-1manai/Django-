@@ -11,7 +11,12 @@ from .models import Crop
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import FertilizationSchedule
-from .models import FertilizationSchedule
+
+
+import pickle
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -261,3 +266,36 @@ def delete_fertilization(request, schedule_id):
         messages.success(request, 'Programme de fertilisation supprimé avec succès !')
         return redirect('fertilization_list')
     return render(request, 'frontoffice/fertilization/delete_fertilization.html', {'schedule': schedule})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################
+# Charger le modèle ML
+with open('climate/fertilization_model.pkl', 'rb') as f:
+    model = pickle.load(f)
+
+@csrf_exempt  # Pour éviter les problèmes CSRF lors des tests
+def predict_fertilization(request):
+    if request.method == "POST":
+        # Récupérer les données de la requête POST
+        crop_type = int(request.POST.get('crop_type'))
+        soil_type = int(request.POST.get('soil_type'))
+        
+        # Faire la prédiction
+        prediction = model.predict([[crop_type, soil_type]])
+
+        # Retourner la prédiction comme JSON
+        return JsonResponse({'predicted_fertilizer_amount': prediction[0]})
+    
+    return render(request, 'frontoffice/fertilization/predict_fertilization.html')

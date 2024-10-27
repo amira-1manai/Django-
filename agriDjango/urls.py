@@ -34,6 +34,7 @@ urlpatterns = [
     path('fertilization-schedules/update/<int:fertilization_id>/', views.update_fertilization, name='update_fertilization'),
     path('fertilization-schedules/delete/<int:schedule_id>/', views.delete_fertilization, name='delete_fertilization'),
 
+    path('predict-fertilization/', views.predict_fertilization, name='predict_fertilization'),
 
 
 ]

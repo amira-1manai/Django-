@@ -1,0 +1,67 @@
+<!-- templates/predict_fertilization.html -->
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Prédire la Quantité de Fertilisation</h2>
+    
+    <div class="card my-4">
+        <div class="card-header">
+            <h6 class="text-capitalize">Formulaire de Prédiction</h6>
+        </div>
+        <div class="card-body">
+            <form id="predict-form" method="post" action="{% url 'predict_fertilization' %}">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="crop_type" class="form-label">Type de Culture :</label>
+                    <select id="crop_type" name="crop_type" class="form-select" required>
+                        <option value="">Sélectionnez un type de culture</option>
+                        <option value="1">Blé</option>
+                        <option value="2">Maïs</option>
+                        <option value="3">Riz</option>
+                        <option value="4">Orge</option>
+                        <option value="5">Soja</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="soil_type" class="form-label">Type de Sol :</label>
+                    <select id="soil_type" name="soil_type" class="form-select" required>
+                        <option value="">Sélectionnez un type de sol</option>
+                        <option value="1">Argile</option>
+                        <option value="2">Sable</option>
+                        <option value="3">Limon</option>
+                        <option value="4">Humus</option>
+                        <option value="5">Loam</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Prédire</button>
+            </form>
+        </div>
+    </div>
+
+    <h3 id="result" class="mt-4"></h3>
+
+    <script>
+        // Utilisation d'AJAX pour obtenir la prédiction sans recharger la page
+        document.getElementById('predict-form').onsubmit = async function(event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+
+            const formData = new FormData(this);
+            const response = await fetch("{% url 'predict_fertilization' %}", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('result').textContent = "Quantité de Fertilisation Prédite : " + result.predicted_fertilizer_amount.toFixed(2) + " kg/ha";
+            } else {
+                document.getElementById('result').textContent = "Erreur lors de la prédiction.";
+            }
+        };
+    </script>
+</div>
+{% endblock %}
