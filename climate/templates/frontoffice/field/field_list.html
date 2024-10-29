@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
-                    <div class="table-responsive p-0">
+                    <div class="table-responsive px-4 pt-1 pb-2">
                         <table class="table align-items-center justify-content-center mb-0">
                             <thead>
                                 <tr>
@@ -32,7 +32,7 @@
                                     <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">
                                         Soil
                                         Type</th>
-                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-4">
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-5">
                                         Actions</th>
                                 </tr>
                             </thead>
@@ -48,6 +48,9 @@
                                     <td>{{ field.size }}</td>
                                     <td>{{ field.soil_type }}</td>
                                     <td>
+                                        <a href="/weather/?city={{ field.location }}"
+                                            class="btn btn-link text-secondary mb-0">View weather</a> |
+                                        
                                         <a href="{% url 'field_update' field_id=field.id %}"
                                             class="btn btn-link text-secondary mb-0">Edit</a> |
                                         <form method="post" action="{% url 'field_delete' field_id=field.id %}"

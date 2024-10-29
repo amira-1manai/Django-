@@ -1,66 +1,39 @@
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 import datetime
 from .models import Field
-from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 
 
-
-def index(request):
-    api_key = 'b698494103add4361a716425d3c81fca'
-    current_weather_url = 'https://api.openweathermap.org/data/2.5/weather?q={}&appid={}'
-    forecast_url = 'https://api.openweathermap.org/data/2.5/onecall?lat={}&lon={}&exclude=current,minutely,hourly,alerts&appid={}'
-
+def fetch_weather_data(request):
     city = request.GET.get('city')
-
-    if not city:
-        return JsonResponse({'error': 'City parameter is missing'})
-
-    weather_data, daily_forecasts = fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url)
-
-    return JsonResponse({
-        'weather_data': weather_data,
-        'daily_forecasts': daily_forecasts,
-    })
-
-def fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url):
-    response = requests.get(current_weather_url.format(city, api_key)).json()
-
-    # Print the API response to inspect the structure
-    print("Current weather response:", response)
-
-    if 'coord' not in response:
-        return {'error': f"City '{city}' not found or API error."}, []
+    api_key = 'b698494103add4361a716425d3c81fca'
+    
+    # Get coordinates using OpenWeatherMap
+    geocode_url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
+    response = requests.get(geocode_url).json()
+    
+    if response.get("cod") != 200:
+        error_message = f"City '{city}' not found."
+        return render(request, 'frontoffice/weather/weather-display.html', {'error': error_message, 'city': city})
 
     lat, lon = response['coord']['lat'], response['coord']['lon']
-    forecast_response = requests.get(forecast_url.format(lat, lon, api_key)).json()
+    
+    # Fetch forecast from Open-Meteo
+    open_meteo_url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto'
+    forecast_response = requests.get(open_meteo_url).json()
 
-    print("Forecast response:", forecast_response)
+    # Preprocess forecast data
+    forecast_data = []
+    for date, max_temp, min_temp in zip(forecast_response['daily']['time'], forecast_response['daily']['temperature_2m_max'], forecast_response['daily']['temperature_2m_min']):
+        forecast_data.append({
+            'date': date,
+            'max_temp': max_temp,
+            'min_temp': min_temp,
+        })
 
-    weather_data = {
-        'city': city,
-        'temperature': round(response['main']['temp'] - 273.15, 2),
-        'description': response['weather'][0]['description'],
-        'icon': response['weather'][0]['icon'],
-    }
-
-    daily_forecasts = []
-    if 'daily' in forecast_response:
-        for daily_data in forecast_response['daily'][:5]:
-            daily_forecasts.append({
-                'day': datetime.datetime.fromtimestamp(daily_data['dt']).strftime('%A'),
-                'min_temp': round(daily_data['temp']['min'] - 273.15, 2),
-                'max_temp': round(daily_data['temp']['max'] - 273.15, 2),
-                'description': daily_data['weather'][0]['description'],
-                'icon': daily_data['weather'][0]['icon'],
-            })
-    else:
-        return {'error': 'Forecast data not available.'}, []
-
-    return weather_data, daily_forecasts
-
+    return render(request, 'frontoffice/weather/weather-display.html', {'forecast_data': forecast_data, 'city': city})
 
 
 def home_view(request):
@@ -69,8 +42,7 @@ def template_tables(request):
     return render(request, 'frontoffice/template/tables.html')
 
 
-
-
+# Field views
 def create_field(request):
     if request.method == 'POST':
         size = request.POST.get('size')
