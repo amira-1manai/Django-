@@ -10,6 +10,7 @@ class Field(models.Model):
     def __str__(self):
         return f"Field {self.id} - {self.location}"
 
+
 # Irrigation Plan Model
 class IrrigationPlan(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)

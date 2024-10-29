@@ -4,15 +4,10 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import os
 
-# Exemple de données simulées
-data = {
-    'crop_type': [1, 2, 1, 3, 2],  # 1: Blé, 2: Maïs, 3: Riz
-    'soil_type': [1, 2, 1, 1, 3],  # 1: Argile, 2: Sable, 3: Limon
-    'fertilizer_amount': [100, 150, 120, 200, 180]  # en kg/ha
-}
 
-# Création d'un DataFrame
-df = pd.DataFrame(data)
+# Charger les données depuis le fichier CSV
+data_file_path = 'fertilization_data.csv'  # Modifiez le chemin si nécessaire
+df = pd.read_csv(data_file_path)
 
 # Définir les caractéristiques et la cible
 X = df[['crop_type', 'soil_type']]
