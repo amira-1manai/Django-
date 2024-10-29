@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irrigation Prediction</title>
+</head>
+<body>
+    <h1>Irrigation Prediction Form</h1>
+    <form id="prediction-form" method="POST" action="{% url 'predict' %}">
+        {% csrf_token %}
+        <label for="temperature">Temperature:</label>
+        <input type="number" name="temperature" required><br>
+        
+        <label for="humidity">Humidity:</label>
+        <input type="number" name="humidity" required><br>
+        
+        <label for="rainfall">Rainfall:</label>
+        <input type="number" name="rainfall" required><br>
+        
+        <label for="soil_type">Soil Type:</label>
+        <select name="soil_type" required>
+            <option value="">--Select Soil Type--</option>
+            <option value="sandy">Sandy</option>
+            <option value="clay">Clay</option>
+            <option value="Loam">Loam</option>
+            <!-- Add other soil types as needed -->
+        </select><br>
+        
+        <label for="crop_type">Crop Type:</label>
+        <select name="crop_type" required>
+            <option value="">--Select Crop Type--</option>
+            <option value="wheat">Wheat</option>
+            <option value="corn">Corn</option>
+            <option value="rice">Rice</option>
+            <!-- Add other crop types as needed -->
+        </select><br>
+        
+        <button type="submit">Predict</button>
+    </form>
+    
+    {% if prediction %}
+        <h2>Predicted Irrigation Amount: {{ prediction }} L/m² per day</h2>
+    {% endif %}
+</body>
+</html>
