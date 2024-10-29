@@ -1,0 +1,52 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Mettre à jour le programme de fertilisation</h3>
+
+    <form method="post" action="{% url 'update_fertilization' fertilization_schedule.id %}">
+        {% csrf_token %}
+    
+        <!-- Crop Select Dropdown -->
+        <label for="crop">Culture</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="crop" id="crop" class="form-control" required>
+                <option value="">Sélectionnez une culture</option>
+                {% for crop in crops %}
+                <option value="{{ crop.id }}" {% if fertilization_schedule.crop.id == crop.id %}selected{% endif %}>
+                    {{ crop.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <!-- Fertilizer Type Field -->
+        <label for="fertilizer_type">Type de fertilisant</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="text" id="fertilizer_type" name="fertilizer_type" class="form-control" value="{{ fertilization_schedule.fertilizer_type }}" required>
+        </div>
+    
+        <!-- Amount Field -->
+        <label for="amount">Quantité (kg/ha)</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" id="amount" name="amount" class="form-control" value="{{ fertilization_schedule.amount }}" required>
+        </div>
+    
+        <!-- Application Date Field -->
+        <label for="application_date">Date d'application</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="date" id="application_date" name="application_date" class="form-control" value="{{ fertilization_schedule.application_date }}" required>
+        </div>
+    
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div style="color: red;">
+            <strong>{{ errors.field }}</strong>
+        </div>
+        {% endif %}
+    
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Mettre à jour</button>
+    </form>
+</div>
+{% endblock %}

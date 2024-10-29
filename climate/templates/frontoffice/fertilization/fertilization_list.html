@@ -1,0 +1,64 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="d-flex justify-content-between ms-2 mt-3">
+        <h3>Liste des programmes de fertilisation</h3>
+        <a href="{% url 'create_fertilization' %}" class="btn btn-success mb-3 me-3">Créer un programme de fertilisation</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Tableau des programmes de fertilisation</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center justify-content-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Culture</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Type de fertilisant</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Quantité (kg/ha)</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Date d'application</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for schedule in schedules %}
+                                <tr>
+                                    <td>
+                                        <div class="my-auto ps-3">
+                                            <h6 class="mb-0 text-sm">{{ schedule.crop.name }}</h6>
+                                        </div>
+                                    </td>
+                                    <td>{{ schedule.fertilizer_type }}</td>
+                                    <td>{{ schedule.amount }}</td>
+                                    <td>{{ schedule.application_date }}</td>
+                                    <td>
+                                        <a href="{% url 'update_fertilization' schedule.id %}" class="btn btn-link text-secondary mb-0">Modifier</a> |
+                                        <form method="post" action="{% url 'delete_fertilization' schedule.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-link text-danger mb-0" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce programme de fertilisation ?');">Supprimer</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucun programme de fertilisation trouvé.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

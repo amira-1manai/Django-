@@ -1,0 +1,33 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Update Crop</h3>
+
+    <form method="post" action="{% url 'crop_update' crop.id %}">
+        {% csrf_token %}
+
+        <!-- Name Field -->
+        <label for="name">Crop Name</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="text" id="name" name="name" class="form-control" value="{{ crop.name }}" required>
+        </div>
+
+        <!-- Water Requirement Field -->
+        <label for="water_requirement">Water Requirement (Liters)</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" id="water_requirement" name="water_requirement" step="0.01" class="form-control" value="{{ crop.water_requirement }}" required>
+        </div>
+
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div style="color: red;">
+            <strong>{{ errors.crop }}</strong>
+        </div>
+        {% endif %}
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Update Crop</button>
+    </form>
+</div>
+{% endblock %}
