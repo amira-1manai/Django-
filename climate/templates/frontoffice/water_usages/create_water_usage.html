@@ -1,0 +1,53 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Créer une nouvelle utilisation de l'eau</h3>
+
+    <form method="post" action="{% url 'create_water_usage' %}">  {# Assurez-vous que l'URL correspond à la vue de création #}
+        {% csrf_token %}
+        
+        <!-- Irrigation Plan Field -->
+        <label for="id_irrigation_plan">Plan d'irrigation</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="irrigation_plan" id="id_irrigation_plan" class="form-control">
+                <option value="">Sélectionnez un plan d'irrigation</option>
+                {% for plan in irrigation_plans %}
+                    <option value="{{ plan.id }}">irrigation in {{ plan.field.location }} with {{ plan.water_amount}} litres</option>  {# Supposons que chaque plan a un champ 'name' #}
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Water Source Field -->
+        <label for="id_water_source">Source d'eau</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="water_source" id="id_water_source" class="form-control" required>
+                <option value="">Sélectionnez une source d'eau</option>
+                {% for source in water_sources %}
+                    <option value="{{ source.id }}">{{ source.type }}</option>  {# Supposons que chaque source a un champ 'type' #}
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Amount Used Field -->
+        <label for="id_amount_used">Quantité utilisée (en litres)</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" name="amount_used" id="id_amount_used" class="form-control" placeholder="Entrez la quantité" required>
+        </div>
+
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div style="color: red;">
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Créer l'utilisation de l'eau</button>
+    </form>
+</div>
+{% endblock %}²

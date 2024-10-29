@@ -1,0 +1,38 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Liste des sources d'eau</h3>
+    <a href="{% url 'create_water_source' %}" class="btn btn-primary mb-3">Ajouter une source d'eau</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Capacity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for source in water_sources %}
+            <tr>
+                <td>{{ source.type }}</td>
+                <td>{{ source.location }}</td>
+                <td>{{ source.capacity }}</td>
+                <td>
+                    <a href="{% url 'water_source_update' water_source_id=source.id %}" class="btn btn-link">Edit</a>
+                    <form method="post" action="{% url 'water_source_delete' water_source_id=source.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Are you sure you want to delete this water source?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No water sources found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

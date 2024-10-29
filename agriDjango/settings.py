@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'accounts',
     'rest_framework',
     'predictions',
+      'django_extensions',
+
 ]
 
 MIDDLEWARE = [

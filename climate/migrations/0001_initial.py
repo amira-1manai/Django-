@@ -68,6 +68,7 @@ class Migration(migrations.Migration):
                 ('field', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='climate.field')),
             ],
         ),
+
         migrations.CreateModel(
             name='FertilizationSchedule',
             fields=[
@@ -76,6 +77,16 @@ class Migration(migrations.Migration):
                 ('amount', models.FloatField()),
                 ('application_date', models.DateField()),
                 ('crop', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='climate.crop')),
+            ],
+        ),
+
+        migrations.CreateModel(     
+            name='WaterUsage',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('amount_used', models.DecimalField(decimal_places=2, max_digits=10)),
+                ('irrigation_plan', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='climate.irrigationplan')),
+                ('water_source', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='climate.watersource')),
             ],
         ),
     ]

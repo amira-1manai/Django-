@@ -1,0 +1,33 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Prédire l'utilisation de l'eau</h3>
+
+    <form method="post" action="{% url 'predict_water_usage' %}">  {# Ensure the URL corresponds to the correct view #}
+        {% csrf_token %}
+
+        <!-- Water Source Field -->
+        <label for="water_source_id">Sélectionnez une source d'eau</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="water_source_id" id="water_source_id" class="form-control" required>
+                <option value="" disabled selected>Sélectionnez une source d'eau</option>
+                {% for source in water_sources %}
+                    <option value="{{ source.id }}">{{ source }}</option>
+                {% empty %}
+                    <option value="">Aucune source d'eau disponible</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Prédire l'utilisation</button>
+    </form>
+
+    {% if predicted_usage is not None %}
+    <div class="mt-4">
+        <h4>Utilisation d'eau prédite : {{ predicted_usage }} litres</h4>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

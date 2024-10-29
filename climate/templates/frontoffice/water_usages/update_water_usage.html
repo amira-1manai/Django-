@@ -1,0 +1,49 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Mettre à jour l'utilisation de l'eau</h3>
+
+    <form method="post" action="{% url 'water_usage_update' water_usage.id %}">
+        {% csrf_token %}
+        
+        <!-- Irrigation Plan Field -->
+        <div class="mb-3">
+            <label for="irrigation_plan" class="form-label">Plan d'irrigation</label>
+            <select id="irrigation_plan" name="irrigation_plan" class="form-select" required>
+                <option value="" disabled>Select an irrigation plan</option>
+                {% for plan in irrigation_plans %}
+                    <option value="{{ plan.id }}" {% if plan.id == water_usage.irrigation_plan.id %}selected{% endif %}>{{ plan }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <!-- Water Source Field -->
+        <div class="mb-3">
+            <label for="water_source" class="form-label">Source d'eau</label>
+            <select id="water_source" name="water_source" class="form-select" required>
+                <option value="" disabled>Select a water source</option>
+                {% for source in water_sources %}
+                    <option value="{{ source.id }}" {% if source.id == water_usage.water_source.id %}selected{% endif %}>{{ source }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Amount Used Field -->
+        <div class="mb-3">
+            <label for="amount_used" class="form-label">Quantité utilisée (en litres)</label>
+            <input type="number" step="0.01" id="amount_used" name="amount_used" class="form-control" value="{{ water_usage.amount_used }}" required>
+        </div>
+        
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div class="alert alert-danger">
+            <strong>{{ errors }}</strong>
+        </div>
+        {% endif %}
+        
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Mettre à jour l'utilisation de l'eau</button>
+    </form>
+</div>
+{% endblock %}
