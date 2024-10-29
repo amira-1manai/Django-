@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Water Quality</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Water Quality Prediction</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="electrical_conductivity">Electrical Conductivity (uS/cm):</label>
+                <input type="number" name="electrical_conductivity" id="electrical_conductivity" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="ph">pH:</label>
+                <input type="number" name="ph" id="ph" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="sar">Sodium Adsorption Ratio (SAR):</label>
+                <input type="number" name="sar" id="sar" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="turbidity">Turbidity (NTU):</label>
+                <input type="number" name="turbidity" id="turbidity" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="hardness">Hardness (mg/L):</label>
+                <input type="number" name="hardness" id="hardness" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="tds">Total Dissolved Solids (mg/L):</label>
+                <input type="number" name="tds" id="tds" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="chloride">Chloride (mg/L):</label>
+                <input type="number" name="chloride" id="chloride" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="sulfate">Sulfate (mg/L):</label>
+                <input type="number" name="sulfate" id="sulfate" class="form-control" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="nitrate">Nitrate (mg/L):</label>
+                <input type="number" name="nitrate" id="nitrate" class="form-control" step="any" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Predict Water Quality</button>
+        </form>
+
+        {% if result %}
+        <div class="alert alert-info mt-4">
+            <h4>Prediction Result:</h4>
+            <p>{{ result }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -34,5 +34,6 @@ urlpatterns = [
 
     path('predict/',views.predict_water_usage, name='predict_water_usage'),  # Assurez-vous que c'est correct
 
+    path('predict-water-quality/', views.predict_water_quality_view, name='predict_water_quality'),
 
 ]
