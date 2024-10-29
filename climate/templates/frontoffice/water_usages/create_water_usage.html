@@ -10,7 +10,7 @@
         <!-- Irrigation Plan Field -->
         <label for="id_irrigation_plan">Plan d'irrigation</label>
         <div class="input-group input-group-outline mb-3">
-            <select name="irrigation_plan" id="id_irrigation_plan" class="form-control" required>
+            <select name="irrigation_plan" id="id_irrigation_plan" class="form-control" required style="color: white;">
                 <option value="">Sélectionnez un plan d'irrigation</option>
                 {% for plan in irrigation_plans %}
                     <option value="{{ plan.id }}">{{ plan.name }}</option>  {# Supposons que chaque plan a un champ 'name' #}
@@ -50,4 +50,4 @@
         <button type="submit" class="btn btn-success">Créer l'utilisation de l'eau</button>
     </form>
 </div>
-{% endblock %}
+{% endblock %}²

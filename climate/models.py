@@ -1,6 +1,6 @@
 from django.db import models
 
-# Irrigation Field
+# Irrigation Field Model
 class Field(models.Model):
     size = models.FloatField()
     location = models.CharField(max_length=255)
@@ -45,7 +45,8 @@ class WeatherData(models.Model):
 
     def __str__(self):
         return f"Weather on {self.date} - Temp: {self.temperature}°C"
-    # Water Usage Model
+
+# Water Usage Model
 class WaterUsage(models.Model):
     irrigation_plan = models.ForeignKey(IrrigationPlan, on_delete=models.CASCADE)
     water_source = models.ForeignKey(WaterSource, on_delete=models.CASCADE)
@@ -53,4 +54,3 @@ class WaterUsage(models.Model):
 
     def __str__(self):
         return f"{self.amount_used} liters from {self.water_source} using {self.irrigation_plan}"
-    

@@ -31,5 +31,8 @@ urlpatterns = [
     path('water_usages/<int:water_usage_id>/update/', views.water_usage_update, name='water_usage_update'),
 
     # Prediction URL
-    path('predict/', views.train_and_predict, name='predict'),
+
+    path('predict/',views.predict_water_usage, name='predict_water_usage'),  # Assurez-vous que c'est correct
+
+
 ]

@@ -4,13 +4,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import Field, IrrigationPlan, WaterSource, WaterUsage
-
+import pickle
+from django.shortcuts import render
 import datetime
 import pandas as pd
 from django.shortcuts import render
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from django.shortcuts import render
+
 def index(request):
     api_key = 'b698494103add4361a716425d3c81fca'
     current_weather_url = 'https://api.openweathermap.org/data/2.5/weather?q={}&appid={}'
@@ -261,3 +264,25 @@ def train_and_predict(request):
 
     # Renvoie le résultat au template
     return render(request, 'frontoffice/water_usages/predict.html', {'predictions': predictions_list})
+
+
+
+def predict_water_usage(request):
+    predicted_usage = None
+    water_sources = WaterSource.objects.all()  # Fetch all water sources for the dropdown
+
+    if request.method == 'POST':
+        water_source_id = request.POST.get('water_source_id')
+        water_source = get_object_or_404(WaterSource, id=water_source_id)
+
+        # Load the trained model
+        with open('climate/water_optimization_model.pkl', 'rb') as f:
+            model = pickle.load(f)
+
+        # Make a prediction using the capacity of the selected water source
+        predicted_usage = model.predict([[water_source.capacity]])[0]
+
+    return render(request, 'frontoffice/water_usages/predict_water_usage.html', {
+        'predicted_usage': predicted_usage,
+        'water_sources': water_sources,
+    })

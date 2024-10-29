@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Water Usage</title>
+</head>
+<body>
+    <h1>Predict Water Usage</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="water_source_id">Select Water Source:</label>
+            <select name="water_source_id" id="water_source_id" required>
+                <option value="" disabled selected>Select a water source</option>
+                {% for source in water_sources %}
+                    <option value="{{ source.id }}">{{ source }}</option>
+                {% empty %}
+                    <option value="">No water sources available</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit">Predict Usage</button>
+        </div>
+    </form>
+
+    {% if predicted_usage is not None %}
+        <h2>Predicted Water Usage: {{ predicted_usage }} liters</h2>
+    {% endif %}
+</body>
+</html>
