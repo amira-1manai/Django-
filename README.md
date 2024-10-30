@@ -30,18 +30,17 @@ To get started with the project, follow these steps:
 Install Dependencies:
 bash
 
-Copy
 cd optimized-irrigation
 pip install -r requirements.txt
 Set Up the Database:
 bash
 
-Copy
+
 python manage.py migrate
 Run the Development Server:
 bash
 
-Copy
+
 python manage.py runserver
 Access the Application: Open your browser and go to http://127.0.0.1:8000.
 Contributing 🤝
@@ -54,7 +53,7 @@ Acknowledgments 🙏
 Special thanks to the contributors and the open-source community for their invaluable resources and support!
 livecodeserver
 
-Copy
+
 
 ### Changes Made:
 - The image link was added directly to the Markdown syntax.
