@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Field, IrrigationPlan, Crop, WaterSource, WeatherData, FertilizationSchedule
-from .models import Field, IrrigationPlan, Crop, WaterSource, WeatherData,WaterUsage
+from .models import Field, IrrigationPlan, Crop, WaterSource, WeatherData,WaterUsage, Machine
 
 admin.site.register(Field)
 admin.site.register(IrrigationPlan)
@@ -10,4 +10,5 @@ admin.site.register(WaterSource)
 admin.site.register(WeatherData)
 admin.site.register(FertilizationSchedule)
 admin.site.register(WaterUsage)
+admin.site.register(Machine)
 

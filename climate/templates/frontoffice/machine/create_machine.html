@@ -1,0 +1,57 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+<div class="container card col-9 p-4 mt-4">
+    <h3>Create New Machine</h3>
+
+    <form method="post" action="{% url 'create_machine' %}">
+        {% csrf_token %}
+
+        <!-- Machine Name Field -->
+        <label for="name">Machine Name</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="text" id="name" name="name" class="form-control" placeholder="Enter machine name" required>
+        </div>
+
+        <!-- Machine Type Field -->
+        <label for="type">Machine Type</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="text" id="type" name="type" class="form-control" placeholder="Enter machine type" required>
+        </div>
+
+        <!-- Purchase Date Field -->
+        <label for="purchase_date">Purchase Date</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="date" id="purchase_date" name="purchase_date" class="form-control" required>
+        </div>
+
+        <!-- Last Maintenance Date Field -->
+        <label for="last_maintenance_date">Last Maintenance Date</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="date" id="last_maintenance_date" name="last_maintenance_date" class="form-control">
+        </div>
+
+        <!-- Field Assignment Dropdown -->
+        <label for="field">Assign to Field</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="field" id="field" class="form-control">
+                <option value="">Select Field (optional)</option>
+                {% for field in fields %}
+                    <option value="{{ field.id }}">{{ field.location }} - {{ field.size }} acres</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Display Form Errors (If Any) -->
+        {% if errors %}
+        <div style="color: red;">
+            <strong>{{ errors.machine }}</strong>
+        </div>
+        {% endif %}
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Create Machine</button>
+    </form>
+
+</div>
+{% endblock %}

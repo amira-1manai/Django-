@@ -1,0 +1,65 @@
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="d-flex justify-content-between ms-2 mt-3">
+        <h3>List of Machines</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Machines Table</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive px-4 pt-1 pb-2">
+                        <table class="table align-items-center justify-content-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Name</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Type</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Purchase Date</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Last Maintenance Date</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-5">Field</th>
+                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-5">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for machine in machines %}
+                                <tr>
+                                    <td>
+                                        <div class="my-auto ps-3">
+                                            <h6 class="mb-0 text-sm">{{ machine.name }}</h6>
+                                        </div>
+                                    </td>
+                                    <td>{{ machine.type }}</td>
+                                    <td>{{ machine.purchase_date }}</td>
+                                    <td>{{ machine.last_maintenance_date }}</td>
+                                    <td> Field in {{ machine.field.location  }}</td>
+
+                                    <td>
+                                        <form method="post" action="{% url 'machine_delete' machine_id=machine.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-link text-danger mb-0" onclick="return confirm('Are you sure you want to delete this machine?');">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No machines found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

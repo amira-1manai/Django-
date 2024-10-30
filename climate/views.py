@@ -6,7 +6,7 @@ from .models import Crop
 from .models import FertilizationSchedule
 import pickle
 from django.views.decorators.csrf import csrf_exempt
-from .models import Field, IrrigationPlan, WaterSource, WaterUsage
+from .models import Field, IrrigationPlan, WaterSource, WaterUsage, Machine
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
@@ -17,7 +17,6 @@ def fetch_weather_data(request):
     city = request.GET.get('city')
     api_key = 'b698494103add4361a716425d3c81fca'
     
-    # Get coordinates using OpenWeatherMap
     geocode_url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
     response = requests.get(geocode_url).json()
     
@@ -255,6 +254,7 @@ def predict_fertilization(request):
         return JsonResponse({'predicted_fertilizer_amount': prediction[0]})
     
     return render(request, 'frontoffice/fertilization/predict_fertilization.html')
+
 # Create a new water source
 def create_water_source(request):
     if request.method == 'POST':
@@ -356,13 +356,16 @@ def water_usage_delete(request, water_usage_id):
         water_usage.delete()
         messages.success(request, 'Water usage deleted successfully.')
         return redirect('water_usage_list')
-    return redirect('water_usage_list')  # Redirect if method is not POST
+    return redirect('water_usage_list')
+
 # List all water usages
 def water_usage_list(request):
     water_usages = WaterUsage.objects.all()
     return render(request, 'frontoffice/water_usages/water_usage_list.html', {
         'water_usages': water_usages
     })
+    
+    
 #
 def train_and_predict(request):
     # Récupérer les données de WaterUsage
@@ -503,3 +506,70 @@ def predict_water_quality_view(request):
 
     # Render the template with the result
     return render(request, 'frontoffice/water_sources/water_quality_form.html', {'result': result})
+
+
+
+# Create Machine View
+def create_machine(request):
+    fields = Field.objects.all()  # Get all fields for assignment
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        machine_type = request.POST.get('type')
+        purchase_date = request.POST.get('purchase_date')
+        last_maintenance_date = request.POST.get('last_maintenance_date')
+        field_id = request.POST.get('field')  # Retrieve the field assignment if any
+
+        errors = {}
+        if not name or not machine_type or not purchase_date:
+            errors['machine'] = 'Name, type, and purchase date are required fields.'
+
+        # Only create the machine if there are no errors
+        if not errors:
+            field = Field.objects.get(id=field_id) if field_id else None
+            Machine.objects.create(
+                name=name,
+                type=machine_type,
+                purchase_date=purchase_date,
+                last_maintenance_date=last_maintenance_date,
+                field=field
+            )
+            messages.success(request, 'Machine created successfully.')
+            return redirect('machine_list')
+
+        return render(request, 'frontoffice/machine/create_machine.html', {'errors': errors, 'fields': fields})
+
+    return render(request, 'frontoffice/machine/create_machine.html', {'fields': fields})
+
+# List Machines View
+def machine_list(request):
+    machines = Machine.objects.all()
+    return render(request, 'frontoffice/machine/machine_list.html', {'machines': machines})
+
+# Delete Machine View
+def machine_delete(request, machine_id):
+    machine = get_object_or_404(Machine, id=machine_id)
+    if request.method == 'POST':
+        machine.delete()
+        messages.success(request, 'Machine deleted successfully.')
+        return redirect('machine_list')
+    return redirect('machine_list')
+
+# Update Machine View
+def machine_update(request, machine_id):
+    machine = get_object_or_404(Machine, id=machine_id)
+    fields = Field.objects.all()  # Include fields for reassignment if needed
+
+    if request.method == 'POST':
+        machine.name = request.POST['name']
+        machine.type = request.POST['type']
+        machine.purchase_date = request.POST['purchase_date']
+        machine.last_maintenance_date = request.POST.get('last_maintenance_date')
+        field_id = request.POST.get('field')
+        
+        # Update the field assignment
+        machine.field = Field.objects.get(id=field_id) if field_id else None
+        machine.save()
+        messages.success(request, 'Machine updated successfully.')
+        return redirect('machine_list')
+
+    return render(request, 'frontoffice/machine/update_machine.html', {'machine': machine, 'fields': fields})

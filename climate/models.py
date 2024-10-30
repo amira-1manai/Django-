@@ -83,3 +83,14 @@ class WaterUsage(models.Model):
 
     def __str__(self):
         return f"{self.amount_used} liters from {self.water_source} using {self.irrigation_plan}"
+
+
+class Machine(models.Model):
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    purchase_date = models.DateField()
+    last_maintenance_date = models.DateField(null=True, blank=True)
+    field = models.ForeignKey(Field, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} - Field {self.field.id if self.field else 'None'}"

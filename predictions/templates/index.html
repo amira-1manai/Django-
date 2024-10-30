@@ -1,46 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Irrigation Prediction</title>
-</head>
-<body>
-    <h1>Irrigation Prediction Form</h1>
+{% extends 'frontoffice/layout/app.html' %}
+
+{% block content %}
+
+
+
+
+<div class="container card col-9 p-4 mt-4">
+    <h3>Irrigation Prediction Form</h3>
+
     <form id="prediction-form" method="POST" action="{% url 'predict' %}">
         {% csrf_token %}
-        <label for="temperature">Temperature:</label>
-        <input type="number" name="temperature" required><br>
         
-        <label for="humidity">Humidity:</label>
-        <input type="number" name="humidity" required><br>
-        
-        <label for="rainfall">Rainfall:</label>
-        <input type="number" name="rainfall" required><br>
-        
-        <label for="soil_type">Soil Type:</label>
-        <select name="soil_type" required>
-            <option value="">--Select Soil Type--</option>
-            <option value="sandy">Sandy</option>
-            <option value="clay">Clay</option>
-            <option value="Loam">Loam</option>
-            <!-- Add other soil types as needed -->
-        </select><br>
-        
-        <label for="crop_type">Crop Type:</label>
-        <select name="crop_type" required>
-            <option value="">--Select Crop Type--</option>
-            <option value="wheat">Wheat</option>
-            <option value="corn">Corn</option>
-            <option value="rice">Rice</option>
-            <!-- Add other crop types as needed -->
-        </select><br>
-        
-        <button type="submit">Predict</button>
-    </form>
+        <!-- Temperature Field -->
+        <label for="temperature">Temperature</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" id="temperature" name="temperature" class="form-control" placeholder="Enter temperature" required>
+        </div>
     
+        <!-- Humidity Field -->
+        <label for="humidity">Humidity</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" id="humidity" name="humidity" class="form-control" placeholder="Enter humidity" required>
+        </div>
+    
+        <!-- Rainfall Field -->
+        <label for="rainfall">Rainfall</label>
+        <div class="input-group input-group-outline mb-3">
+            <input type="number" id="rainfall" name="rainfall" class="form-control" placeholder="Enter rainfall" required>
+        </div>
+    
+        <!-- Soil Type Select Dropdown -->
+        <label for="soil_type">Soil Type</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="soil_type" id="soil_type" class="form-control" required>
+                <option value="">Select Soil Type</option>
+                <option value="sandy">Sandy</option>
+                <option value="clay">Clay</option>
+                <option value="loam">Loam</option>
+                <!-- Add other soil types as needed -->
+            </select>
+        </div>
+    
+        <!-- Crop Type Select Dropdown -->
+        <label for="crop_type">Crop Type</label>
+        <div class="input-group input-group-outline mb-3">
+            <select name="crop_type" id="crop_type" class="form-control" required>
+                <option value="">Select Crop Type</option>
+                <option value="wheat">Wheat</option>
+                <option value="corn">Corn</option>
+                <option value="rice">Rice</option>
+                <!-- Add other crop types as needed -->
+            </select>
+        </div>
+    
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Predict</button>
+    </form>
+
     {% if prediction %}
-        <h2>Predicted Irrigation Amount: {{ prediction }} L/m² per day</h2>
+        <h3 class="mt-3">Predicted Irrigation Amount: {{ prediction }} L/m² per day</h3>
     {% endif %}
-</body>
-</html>
+    
+    
+</div>
+
+{% endblock %}
